@@ -8,5 +8,11 @@
 
 ## Requires
 
-- Hyper-V enabled Windows OS
-- an iso-file moved into the ISO folder
+- Hyper-V enabled
+- an iso-file
+
+## Step-by-Step
+1. git clone https://github.com/ehmiiz/labmil.git - cd labmil
+2. .\New-LabmilVM.ps1 -Name "DC01" -IsoPath "C:\Users\Example\WinServ2022.iso"
+3. The -IsoPath param is only needed on first-time-use. It will copy the iso to C:\VM\ISO, and re-use it
+4. To create multiple VMs after first use; "DC2","DC3","DC4","PKI-ROOT","PKI-ISSUER" | Foreach-Object { .\New-LabmilVM.ps1 -Name $_ }
