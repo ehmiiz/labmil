@@ -140,3 +140,4 @@ $EndReusult = [PSCustomObject]@{
 }
 
 $EndReusult
+$password = "asd"
