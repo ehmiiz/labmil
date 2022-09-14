@@ -23,6 +23,11 @@ param (
     # Provide iso-path on first-run
     [string]$IsoPath
 )
+
+if ( -not $IsLinux) {
+    $IsWindows = $True
+}
+
 # Verify Windows
 if (-not $IsWindows) {
     Write-Error "Hyper-V is a Windows feature only." -ErrorAction Stop
