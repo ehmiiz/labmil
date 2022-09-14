@@ -24,14 +24,16 @@ param (
     [string]$IsoPath
 )
 
-if ( -not $IsLinux) {
-    $IsWindows = $True
+if ($PSVersionTable.PSVersion.Major -lt 6) {
+    Write-Verbose "Windows PowerShell detected, assuming windows client.."
+}
+else {
+    # Verify Windows
+    if (-not $IsWindows) {
+        Write-Error "Hyper-V is a Windows feature only." -ErrorAction Stop
+    }
 }
 
-# Verify Windows
-if (-not $IsWindows) {
-    Write-Error "Hyper-V is a Windows feature only." -ErrorAction Stop
-}
 
 # Verify Hyper-V
 $HyperV = Get-Service vmcompute
@@ -90,6 +92,18 @@ if ($VMCheck.Name -eq $Name) {
     Write-Error -Exception $NotSupportedException -Category NotImplemented -ErrorAction Stop
 }
 
+# Find correct VMSwitch
+$DefaultSwitch = Get-VMSwitch 'Default Switch' -ErrorAction SilentlyContinue
+if ( -not $DefaultSwitch) {
+    try {
+        $DefaultSwitch = (Get-VMSwitch)[0]
+    }
+    catch {
+        throw $error[0]
+    }
+}
+
+
 # Create VM
 try {
     $labMilVMParams = @{
@@ -97,7 +111,7 @@ try {
         MemoryStartUpBytes = 1GB
         NewVHDPath         = "$env:HYPERMIL_V\DRIVE\$Name.vhdx"
         NewVHDSizeBytes    = 40GB
-        SwitchName         = 'Default Switch'
+        SwitchName         = $DefaultSwitch.Name
     }
     New-VM @labMilVMParams | Out-Null
 }
